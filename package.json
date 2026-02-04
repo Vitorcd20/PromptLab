@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "format": "prettier --write",
-    "typecheck": "tsc --noEmit --skipLiCheck"
+    "typecheck": "tsc --noEmit --skipLibCheck"
   },
   "dependencies": {
     "@prisma/client": "^6.19.2",
