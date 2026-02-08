@@ -116,4 +116,23 @@ describe('SidebarContent', () => {
       expect(pushMock).toHaveBeenCalledWith('/new');
     });
   });
+
+  describe('Search', () => {
+    it('should navigate using an encoded URL when the user types or clears the input', async () => {
+      const text = 'A B';
+      makeSut();
+
+      const searchInput = screen.getByPlaceholderText('Search prompts...');
+
+      await user.type(searchInput, text);
+
+      expect(pushMock).toHaveBeenCalled();
+      const lastCall = pushMock.mock.calls.at(-1);
+      expect(lastCall?.[0]).toBe('/?q=A%20B');
+
+      await user.clear(searchInput);
+      const lastClearCall = pushMock.mock.calls.at(-1);
+      expect(lastClearCall?.[0]).toBe('/');
+    });
+  });
 });
