@@ -11,7 +11,17 @@ import {
 import { useRouter } from 'next/navigation';
 import Logo from '../logo/logo';
 
-export default function SidebarContent() {
+type Prompt = {
+  id: string;
+  title: string;
+  content: string;
+};
+
+export type SidebarContentProps = {
+  prompts: Prompt[];
+};
+
+export default function SidebarContent({ prompts }: SidebarContentProps) {
   const router = useRouter();
 
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -62,6 +72,8 @@ export default function SidebarContent() {
                   onClick={collapsedSidebar}
                   variant="icon"
                   className="hidden md:inline-flex p-2 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-accent-500 rounded-lg transition-colors"
+                  title="Minimize sidebar"
+                  aria-label="Minimize sidebar"
                 >
                   <ArrowLeftToLine className="w-5 h-5 text-gray-100" />
                 </Button>
@@ -77,6 +89,10 @@ export default function SidebarContent() {
           </section>
         </>
       )}
+
+      {prompts.map((prompt) => (
+        <p key={prompt.id}>{prompt.title}</p>
+      ))}
     </aside>
   );
 }
