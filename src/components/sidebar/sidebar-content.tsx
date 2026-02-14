@@ -46,7 +46,7 @@ export default function SidebarContent({ prompts }: SidebarContentProps) {
       className={`border-r border-gray-700 flex flex-col h-full bg-gray-800 transition-[transform,width] duration-300 ease-in-out fixed md:relative left-0 top-0 z-50 md:z-auto w-[80vw] sm:w-[320px] ${isCollapsed ? 'md:w-[72px]' : 'md:w-[384px]'}`}
     >
       {isCollapsed && (
-        <aside className="px-2 py-6">
+        <section className="px-2 py-6">
           <header className="flex items-center justify-center mb-6">
             <Button
               onClick={expandSidebar}
@@ -58,7 +58,16 @@ export default function SidebarContent({ prompts }: SidebarContentProps) {
               <ArrowRightToLine className="w-5 h-5 text-gray-100" />
             </Button>
           </header>
-        </aside>
+          <div className="flex flex-col items-center space-y-4">
+            <Button
+              onClick={handleNewPrompt}
+              aria-label="New Prompt"
+              title="New Prompt"
+            >
+              <AddIcon className="w-5 h-5 text-white" />
+            </Button>
+          </div>
+        </section>
       )}
 
       {!isCollapsed && (
@@ -110,10 +119,14 @@ export default function SidebarContent({ prompts }: SidebarContentProps) {
               </Button>
             </div>
           </section>
+          <nav
+            className="flex overflow-auto pb-6 px-6"
+            aria-label="Prompts List"
+          >
+            <PromptList prompts={prompts} />
+          </nav>
         </>
       )}
-
-      <PromptList prompts={prompts} />
     </aside>
   );
 }
