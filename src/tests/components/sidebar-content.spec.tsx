@@ -89,6 +89,30 @@ describe('SidebarContent', () => {
       expect(expandButton).not.toBeInTheDocument();
     });
 
+    it('should re-expand when clicking the expand button', async () => {
+      makeSut();
+
+      const collapseButton = screen.getByRole('button', {
+        name: /minimize sidebar/i,
+      });
+
+      await user.click(collapseButton);
+
+      const expandButton = screen.getByRole('button', {
+        name: /expand sidebar/i,
+      });
+
+      await user.click(expandButton);
+
+      expect(
+        screen.getByRole('button', { name: /minimize sidebar/i })
+      ).toBeVisible();
+
+      expect(
+        screen.getByRole('navigation', { name: 'Prompts List' })
+      ).toBeVisible();
+    });
+
     it('should collapse and show the expand button', async () => {
       makeSut();
 
@@ -164,6 +188,20 @@ describe('SidebarContent', () => {
       await user.clear(searchInput);
       const lastClearCall = pushMock.mock.calls.at(-1);
       expect(lastClearCall?.[0]).toBe('/');
+    });
+
+    it('should submit the form when typing in the search field', async () => {
+      const submitSpy = jest
+        .spyOn(HTMLFormElement.prototype, 'requestSubmit')
+        .mockImplementation(() => undefined);
+      makeSut();
+
+      const searchInput = screen.getByPlaceholderText('Search prompts...');
+
+      await user.type(searchInput, 'AI');
+
+      expect(submitSpy).toHaveBeenCalled();
+      submitSpy.mockRestore();
     });
   });
 
