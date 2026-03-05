@@ -1,7 +1,12 @@
-import { searchPromptAction } from '@/app/actions/prompt-actions';
+import {
+  createPromptAction,
+  searchPromptAction,
+} from '@/app/actions/prompt-actions';
+import { CreatePromtUseCase } from '@/core/application/prompts/create-prompt.use-case';
 
 jest.mock('@/lib/prisma', () => ({ prisma: {} }));
 const mockedSearchExecute = jest.fn();
+const mockedCreateExecute = jest.fn();
 
 jest.mock('@/core/application/prompts/search-prompt.use', () => ({
   SearchPromptsUseCase: jest.fn().mockImplementation(() => ({
@@ -9,9 +14,57 @@ jest.mock('@/core/application/prompts/search-prompt.use', () => ({
   })),
 }));
 
+jest.mock('@/core/application/prompts/create-prompt.use-case', () => ({
+  CreatePromtUseCase: jest.fn().mockImplementation(() => ({
+    execute: mockedCreateExecute,
+  })),
+}));
+
 describe('Server Actions: Prompts', () => {
   beforeEach(() => {
     mockedSearchExecute.mockReset();
+  });
+
+  describe.only('createPromptAction', () => {
+    it('should create prompt with success', async () => {
+      mockedCreateExecute.mockResolvedValue(undefined);
+
+      const data = {
+        title: 'Title',
+        content: 'Content',
+      };
+
+      const result = await createPromptAction(data);
+
+      expect(result?.success).toBe(true);
+      expect(result?.message).toBe('Prompt created successfuly');
+    });
+
+    it('should return validation error when fields are empty', async () => {
+      const data = {
+        title: '',
+        content: '',
+      };
+      const result = await createPromptAction(data);
+
+      expect(result?.success).toBe(false);
+      expect(result?.message).toBe('Validation Error');
+      expect(result?.errors).toBeDefined();
+    });
+
+    it('should return error when PROMPT_ALREADY_EXISTS happen', async () => {
+      mockedCreateExecute.mockRejectedValue(new Error('PROMPT_ALREADY_EXISTS'));
+
+      const data = {
+        title: 'duplicated',
+        content: 'duplicated',
+      };
+
+      const result = await createPromptAction(data);
+
+      expect(result?.success).toBe(false);
+      expect(result?.message).toBe('This prompt already exists');
+    });
   });
 
   describe('searchPromptAction', () => {
