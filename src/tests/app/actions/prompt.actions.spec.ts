@@ -23,9 +23,10 @@ jest.mock('@/core/application/prompts/create-prompt.use-case', () => ({
 describe('Server Actions: Prompts', () => {
   beforeEach(() => {
     mockedSearchExecute.mockReset();
+    mockedCreateExecute.mockReset();
   });
 
-  describe.only('createPromptAction', () => {
+  describe('createPromptAction', () => {
     it('should create prompt with success', async () => {
       mockedCreateExecute.mockResolvedValue(undefined);
 
@@ -64,6 +65,19 @@ describe('Server Actions: Prompts', () => {
 
       expect(result?.success).toBe(false);
       expect(result?.message).toBe('This prompt already exists');
+    });
+
+    it('should return an generic error when creation fails', async () => {
+      mockedCreateExecute.mockRejectedValue(new Error('UNKNOWN'));
+      const data = {
+        title: 'Title',
+        content: 'Content',
+      };
+
+      const result = await createPromptAction(data);
+
+      expect(result.success).toBe(false);
+      expect(result.message).toBe('Failed to create prompt');
     });
   });
 

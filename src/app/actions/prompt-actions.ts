@@ -9,7 +9,8 @@ import { SearchPromptsUseCase } from '@/core/application/prompts/search-prompt.u
 import { PromptSummary } from '@/core/domain/prompts/prompt.entity';
 import { PrismaPromptRepository } from '@/infra/repository/prisma-prompt.repository';
 import { prisma } from '@/lib/prisma';
-import z, { success } from 'zod';
+import { revalidatePath } from 'next/cache';
+import z from 'zod';
 
 type SearchFormState = {
   success: boolean;
@@ -33,6 +34,7 @@ export async function createPromptAction(data: CreatePromptDTO) {
     const repository = new PrismaPromptRepository(prisma);
     const useCase = new CreatePromtUseCase(repository);
     await useCase.execute(validated.data);
+    revalidatePath('/', 'layout');
   } catch (error) {
     const _error = error as Error;
 
