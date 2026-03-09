@@ -12,6 +12,7 @@ import {
 } from '@/core/application/prompts/create-prompt.dto';
 import { createPromptAction } from '@/app/actions/prompt-actions';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 export const PromptForm = () => {
   const router = useRouter();
@@ -29,9 +30,11 @@ export const PromptForm = () => {
     console.log('Submit', result);
 
     if (!result.success) {
+      toast.error(result.message);
       return;
     }
 
+    toast.success(result.message);
     router.refresh();
   };
 
@@ -43,6 +46,7 @@ export const PromptForm = () => {
             Save
           </Button>
         </header>
+
         <FormField
           control={form.control}
           name="title"
@@ -60,6 +64,7 @@ export const PromptForm = () => {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="content"
